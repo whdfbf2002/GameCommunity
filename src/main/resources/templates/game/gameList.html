@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Game Review</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+  <script th:replace="layout/scripts :: scripts"></script>
+  <style th:replace="layout/styles :: styles"></style>
+</head>
+<body>
+<header th:replace="layout/header :: mainHeader(${categoryList})"></header>
+<section>
+  <div class="container my-2">
+    <div class="row">
+      <aside  th:replace="layout/sidebarLeft :: leftSidebar(${categoryList})"></aside>
+      <div class="col-sm-8 section-inner">
+        <div id="boardTitle" class="container-fluid">
+          <h4>게임 리뷰 게시판</h4>
+        </div>
+        <div class="container mt-3">
+          <div class="row">
+            <div class="col-sm">
+              <table class="table">
+
+                <tr th:if="${#lists.size(dataList)} > 0" th:each="list : ${dataList}">
+                  <td class="p-3" style="width: 300px">
+                    <a href="/game/" th:attrappend="href=${list.gameIdx}">
+                      <img th:src="${list.storedFilePath}" style="width: 200px; height: 150px">
+                    </a>
+                  </td>
+                  <td class="col-sm-6 p-3">
+                    <a href="/game/" th:attrappend="href=${list.gameIdx}" th:text="${list.gameTitle}" style="font-size: 20px"></a>
+                  </td>
+                  <td class="p-3">평점</td>
+                </tr>
+
+                <tr th:unless="${#lists.size(dataList)} > 0">
+                  <td th:cols="3">조회된 결과가 없습니다.</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div th:if="${session.user} == null"></div>
+          <div th:unless="${session.user} == null">
+            <div th:if="${session.user.userId} == 'admin'">
+              <div class="row">
+                <div class="col-sm d-flex justify-content-end">
+                  <a href="/game/write" class="btn btn-primary">등록</a>
+                </div>
+              </div>
+            </div>
+            <div th:unless="${session.user.userId} == 'admin'"></div>
+          </div>
+
+        </div>
+      </div>
+      <aside th:replace="layout/sidebarRight :: sidebarRight"></aside>
+    </div>
+  </div>
+</section>
+
+<ul >
+
+</ul>
+
+<footer th:replace="layout/footer :: mainFooter"></footer>
+</body>
+</html>

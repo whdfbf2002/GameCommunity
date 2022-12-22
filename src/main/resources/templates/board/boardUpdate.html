@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>게시판 글쓰기</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+  <script src="https://kit.fontawesome.com/9e8eac1bbf.js" crossorigin="anonymous"></script>
+  <script th:replace="layout/scripts :: scripts"></script>
+  <style th:replace="layout/styles :: styles"></style>
+  <script>
+    $(document).ready(function () {
+      $("#btn-cancel").on("click", function () {
+        history.back();
+      });
+
+      $("#btn-edit").on("click", function () {
+        $("#method").val("PUT");
+        const frm = $("#frm")[0];
+        frm.action = "/board/update/" + $("#idx").val();
+        frm.submit();
+      });
+
+    });
+  </script>
+</head>
+<body>
+<header th:replace="layout/header :: mainHeader(${categoryList})"></header>
+<section>
+  <div class="container my-2">
+    <div class="row">
+      <aside th:replace="layout/sidebarLeft :: leftSidebar(${categoryList})"></aside>
+      <div class="col-sm-8 section-inner">
+        <div id="boardTitle" class="container">
+          <h4>게시글 수정</h4>
+        </div>
+        <form id="frm" method="post">
+          <div class="d-flex col-auto mt-4 gap-3">
+            <div class="form-control" style="height: 50px">
+              <p class="mt-2" th:text="${board.categoryName}"></p>
+            </div>
+            <select name="boardCategory" class="form-select" style="height: 50px">
+              <div th:each="sub : ${subCategory}">
+                <div th:if="${sub.categoryIdx} == ${board.categoryIdx}">
+                  <option th:text="${sub.subCategoryName}" th:value="${sub.subCategoryName}"></option>
+                </div>
+                <div th:unless="${sub.categoryIdx} == ${board.categoryIdx}"></div>
+              </div>
+            </select>
+          </div>
+
+          <div class="form-floating my-3">
+            <input th:value="${board.boardTitle}" type="text" class="form-control" name="boardTitle" placeholder="제목">
+            <label for="contents">글 제목</label>
+          </div>
+
+          <div class="form-floating my-3">
+            <textarea row="15" class="form-control" id="contents" name="boardContents"
+                      placeholder="내용을 입력하세요" style="height: 300px" th:text="${board.boardContents}"></textarea>
+            <label for="contents">글 내용</label>
+          </div>
+          <div class="d-flex justify-content-between mt-2">
+            <div>
+              <button type="reset" class="btn btn-primary" id="btn-cancel">취소</button>
+              <button type="submit" class="btn btn-primary" id="btn-edit">등록</button>
+            </div>
+          </div>
+          <input type="hidden" id="idx" th:value="${board.boardIdx}">
+          <input type="hidden" id="method" name="_method">
+        </form>
+      </div>
+      <aside th:replace="layout/sidebarRight :: sidebarRight"></aside>
+    </div>
+  </div>
+</section>
+
+<footer th:replace="layout/footer :: mainFooter">
+</footer>
+
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bitc.springproject.mapper.GameMapper">
+    <select id="selectGameList" resultType="com.bitc.springproject.dto.GameDto">
+        <![CDATA[
+            SELECT game.game_title, game.game_info, game.game_idx, game_file.stored_file_path
+            FROM game as game
+            JOIN game_file as game_file ON game.game_idx = game_file.game_idx
+            WHERE deleted_yn = 'N'
+        ]]>
+    </select>
+    
+    <insert id="insertGame" parameterType="com.bitc.springproject.dto.GameDto" useGeneratedKeys="true" keyProperty="gameIdx">
+        <![CDATA[
+            INSERT INTO game (game_title, game_info, create_dt)
+            VALUES (#{gameTitle}, #{gameInfo}, NOW());
+        ]]>
+    </insert>
+    
+    <insert id="insertGameFileList" parameterType="com.bitc.springproject.dto.GameFileDto">
+        <![CDATA[
+            INSERT INTO game_file
+                (game_idx, original_file_name, stored_file_path, file_size)
+            VALUES
+        ]]>
+        <foreach collection="list" item="item" separator=",">
+                (#{item.gameIdx}, #{item.originalFileName}, #{item.storedFilePath}, #{item.fileSize})
+        </foreach>
+    </insert>
+
+    <select id="selectGameDetail" parameterType="int" resultType="com.bitc.springproject.dto.GameDto">
+        <![CDATA[
+            SELECT game.game_title, game.game_info, game.game_idx, game_file.stored_file_path
+            FROM game as game
+            JOIN game_file as game_file ON game.game_idx = game_file.game_idx
+            WHERE game.game_idx = #{gameIdx}
+        ]]>
+    </select>
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bitc.springproject.mapper.CategoryMapper">
+    <select id="categoryList" resultType="com.bitc.springproject.dto.CategoryDto">
+        <![CDATA[
+            SELECT *
+            FROM category
+            WHERE parent_category = "커뮤니티 게시판"
+        ]]>
+    </select>
+
+    <select id="categoryBoard" resultType="com.bitc.springproject.dto.CategoryDto">
+        <![CDATA[
+            SELECT *
+            FROM category
+            WHERE category_idx = ${categoryIdx}
+        ]]>
+    </select>
+
+    <select id="subCategoryList" resultType="com.bitc.springproject.dto.CategoryDto">
+        <![CDATA[
+        SELECT c.*, s.sub_category_name
+        FROM category AS c
+        JOIN sub_category AS s ON s.category_idx = c.category_idx
+        WHERE c.category_idx = #{categoryIdx}
+        ]]>
+    </select>
+
+    <select id="subCategory" resultType="com.bitc.springproject.dto.CategoryDto">
+        <![CDATA[
+        SELECT c.*, s.sub_category_name
+        FROM category AS c
+                 JOIN sub_category AS s ON s.category_idx = c.category_idx
+        ]]>
+    </select>
+
+
+</mapper>

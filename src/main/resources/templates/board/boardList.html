@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+  <script src="https://kit.fontawesome.com/9e8eac1bbf.js" crossorigin="anonymous"></script>
+  <script th:replace="layout/scripts :: scripts"></script>
+  <style th:replace="layout/styles :: styles"></style>
+  <script>
+    function handleOnChange(e) {
+      const value = e.value;
+      if(value != '카테고리'){
+        location.href='/board?cateIdx=' + value;
+      }
+    }
+  </script>
+
+</head>
+<body>
+<header th:replace="layout/header :: mainHeader(${categoryList})"></header>
+<section>
+  <div class="container my-2">
+    <div class="row">
+      <aside th:replace="layout/sidebarLeft :: leftSidebar(${categoryList})"></aside>
+      <div class="col-sm-8 section-inner">
+        <div id="boardTitle" class="container">
+          <h4 th:text="${categoryBoard.categoryName}">게시판</h4>
+        </div>
+        <div class="container mt-3 py-3">
+          <div th:if="${categoryBoard.categoryIdx} == 5 or ${categoryBoard.categoryIdx} == 7"></div>
+          <div th:unless="${categoryBoard.categoryIdx} == 5 or ${categoryBoard.categoryIdx} == 7">
+            <div class="row">
+              <!-- 카테고리 -->
+              <div class="col-auto d-flex">
+                <select class="form-select me-2" onchange="handleOnChange(this)" style="width:140px;">
+                  <option>카테고리</option>
+                  <div th:each="cate : ${categoryList}">
+                    <option th:text="${cate.categoryName}" th:value="${cate.categoryIdx}"
+                            th:selected="${categoryBoard.categoryIdx} == ${cate.categoryIdx}"></option>
+                  </div>
+                </select>
+                <select class="form-select me-2" style="width:140px;">
+                  <option>말머리</option>
+                  <div th:each="sub : ${subCategoryList}">
+                    <option th:text="${sub.subCategoryName}" th:value="${sub.subCategoryName}"></option>
+                  </div>
+                </select>
+                <button class="btn btn-secondary me-2">추천 글</button>
+                <button class="btn btn-secondary">내 글</button>
+              </div>
+            </div>
+          </div>
+
+          <table class="table table-hover table-striped mt-2" id="boardtable">
+            <thead>
+            <tr class="text-center">
+              <th style="width: 90px">글번호</th>
+              <th>제목</th>
+              <th style="width: 90px">작성자</th>
+              <th style="width: 100px">등록일</th>
+              <th style="width: 50px">조회</th>
+              <th style="width: 50px">추천</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.size(categoryBoardList.getList())} > 0" th:each="item : ${categoryBoardList.getList()}">
+              <td th:text="${item.BoardIdx}" class="text-center" style="font-size: 14px">글번호</td>
+              <td>
+                <a href="/board/" th:attrappend="href=${item.boardIdx}" style="color: gray"
+                    th:text="'[' + ${item.boardCategory} + '] '">제목</a>
+                <a href="/board/" th:attrappend="href=${item.boardIdx}" th:text="${item.boardTitle}">제목</a>
+                <a href="/board/" th:attrappend="href=${item.boardIdx}" style="color: red; font-weight: bold"
+                    th:if="${item.commentIdx} != 0" th:text="' [' + ${item.commentIdx} + ']'"></a>
+                <a href="/board/" th:attrappend="href=${item.boardIdx}" th:unless="${item.commentIdx} != 0"></a>
+              </td>
+              <td th:text="${item.boardUserName}" class="text-center">글쓴이</td>
+              <td th:text="${item.boardCreateDt}" class="text-center">등록날짜</td>
+              <td th:text="${item.boardHitCnt}" class="text-center">조회수</td>
+              <td th:text="${item.boardLikeCnt}" class="text-center">추천수</td>
+            </tr>
+            <tr th:unless="${#lists.size(categoryBoardList.getList())} > 0">
+              <td th:cols="5">조회된 내용이 없습니다.</td>
+            </tr>
+            </tbody>
+          </table>
+
+
+
+
+          <div class="d-flex justify-content-center mt-4">
+            <nav aria-label="...">
+              <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${categoryBoardList.getPrePage() == 0} ? 'disabled'">
+                  <a class="page-link" th:href="@{/board(cateIdx=${categoryBoard.categoryIdx}, pageNum=${categoryBoardList.getPrePage()})}">&laquo;</a>
+                </li>
+                <li class="page-item"
+                    th:each="page : ${#numbers.sequence(categoryBoardList.getNavigateFirstPage(), categoryBoardList.getNavigateLastPage())}"
+                    th:classappend="${page == categoryBoardList.getPageNum()} ? 'active'">
+                  <a class="page-link" th:text="${page}" th:href="@{/board(cateIdx=${categoryBoard.categoryIdx}, pageNum=${page})}"></a>
+                </li>
+                <li class="page-item" th:classappend="${categoryBoardList.getNextPage() == 0} ? 'disabled'">
+                  <a class="page-link" th:href="@{/board(cateIdx=${categoryBoard.categoryIdx}, pageNum=${categoryBoardList.getNextPage()})}">&raquo;</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="row">
+            <div class="d-flex justify-content-center">
+              <form action="">
+                <div class="input-group mb-3 col-auto">
+                  <div class="col-sm-4">
+                    <select class="form-select">
+                      <option selected value="1">제목</option>
+                      <option value="1">내용</option>
+                      <option value="1">제목+내용</option>
+                      <option value="1">작성자</option>
+                    </select>
+                  </div>
+                  <input type="text" class="form-control" placeholder="검색어" aria-label="Recipient's username" aria-describedby="button-addon2">
+                  <button class="btn btn-outline-secondary" type="submit" id="button-addon2">검색</button>
+                </div>
+              </form>
+            </div>
+
+            <div th:if="${session.user} == null"></div>
+            <div th:unless="${session.user} == null">
+              <div class="d-flex justify-content-end">
+                <a href="/board/write/cateIdx=" th:attrappend="href=${categoryBoard.categoryIdx}"  class="btn btn-outline-primary">글쓰기</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside th:replace="layout/sidebarRight :: sidebarRight"></aside>
+    </div>
+  </div>
+</section>
+
+<footer th:replace="layout/footer :: mainFooter">
+</footer>
+</body>
+</html>

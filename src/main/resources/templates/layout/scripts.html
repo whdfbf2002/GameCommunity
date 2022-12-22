@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script th:fragment="scripts">
+    $(document).ready(function(){
+      // 사이드바
+      // 카테고리 펼치고 접기
+      let textChange = false;
+      $('#btn-hide').click(function(){
+        if(textChange){
+          textChange = false;
+          $('#btn-hide').text('-');
+        }else{
+          textChange = true;
+          $('#btn-hide').text('+');
+        }
+        $(".hide").toggle();
+      });
+
+      // 사이드바
+      // 로그아웃
+      $(document).ready(function() {
+        $('#btn-out').on('click', function () {
+
+          $.ajax({
+            type: "post",
+            url: "/logout",
+            success: function (data) {
+              alert(" 로그아웃 하셨습니다.");
+              location.reload();
+            }
+          });
+        });
+      });
+
+    });
+
+
+  </script>
+</head>
+<body>
+
+</body>
+</html>

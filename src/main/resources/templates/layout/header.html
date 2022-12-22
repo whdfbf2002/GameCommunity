@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+
+  <script>
+
+  </script>
+</head>
+<body>
+<header th:fragment="mainHeader(${categoryList})" class="container-fluid bg-light mb-3">
+  <div class="container px-4 pt-3">
+    <div class="row">
+      <div class="col-sm-2">
+        <h1 class="title my-2 ms-2">
+          <a href="/" title="LOGO" style="font-weight: bold">LOGO</a>
+        </h1>
+      </div>
+      <div class="col-sm-6 mt-4">
+        <ul class="navbar">
+          <li class="dropdown"><a href="/board/all" class="dropbtn fs-5">게시판</a>
+            <div class="dropdown-content">
+              <ul>
+                <li th:each="cate : ${categoryList}">
+                  <a th:href="@{/board(cateIdx=${cate.categoryIdx})}" th:text="${cate.categoryName}"></a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li><a href="" class="fs-5" th:href="@{/board(cateIdx=5)}">게임뉴스</a></li>
+          <li><a href="/game" class="fs-5">게임리뷰</a></li>
+          <li><a href="" class="fs-5" th:href="@{/board(cateIdx=7)}">공지사항</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-4 d-flex justify-content-end">
+        <form class="navbar-form pull-left mt-4" role="search">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search">
+            <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i></button>
+          </div>
+        </form>
+        <div class="mt-4 ms-3">
+          <div th:if="${session.user} == null">
+            <a href="/login"><h3 style="color: black" class="bi bi-person-fill"></h3></a>
+          </div>
+          <div th:unless="${session.user} == null">
+            <a href="/"><h3 style="color: black" class="bi bi-person-fill"></h3></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+</body>
+</html>

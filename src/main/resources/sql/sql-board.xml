@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bitc.springproject.mapper.BoardMapper">
+
+
+    <!--    전체 게시판 리스트    -->
+    <select id="selectBoardList" resultType="com.bitc.springproject.dto.BoardDto">
+        SELECT b.board_idx, b.board_title, b.board_contents, b.board_user_name, b.board_hit_cnt, b.board_like_cnt,
+               b.comment_idx, b.board_category, c.category_name, b.category_idx,
+        (CASE
+            WHEN (b.board_create_dt BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN DATE_FORMAT(b.board_create_dt, '%H:%i')
+            ELSE DATE_FORMAT(b.board_create_dt, '%Y.%m.%d')
+        END) AS board_create_dt
+        FROM board AS b
+        JOIN category AS c ON c.category_idx = b.category_idx
+        WHERE board_deleted_yn = 'N'
+        ORDER BY board_idx DESC
+    </select>
+
+    <!--    세부 게시판 리스트    -->
+    <select id="categoryBoardList" resultType="com.bitc.springproject.dto.BoardDto">
+        SELECT b.board_idx, b.board_title, b.board_contents, b.board_user_name, b.board_hit_cnt, b.board_like_cnt,
+               b.comment_idx, b.board_category, c.category_name,
+               (CASE
+                    WHEN (b.board_create_dt BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN DATE_FORMAT(b.board_create_dt, '%H:%i')
+                    ELSE DATE_FORMAT(b.board_create_dt, '%Y.%m.%d')
+                   END) AS board_create_dt
+        FROM board AS b
+                 JOIN category AS c ON c.category_idx = b.category_idx
+        WHERE board_deleted_yn = 'N' AND b.category_idx = #{categoryIdx}
+        ORDER BY board_idx DESC
+    </select>
+
+    <!--    글쓰기    -->
+    <insert id="insertBoard" parameterType="com.bitc.springproject.dto.BoardDto">
+        INSERT INTO board
+        (board_category, board_title, board_contents, board_user_name, board_create_dt, category_idx)
+        VALUES (#{boardCategory}, #{boardTitle}, #{boardContents}, #{boardUserName}, NOW(), #{categoryIdx})
+
+    </insert>
+
+    <!--    조회수    -->
+    <select id="boardHitCnt" resultType="int">
+        UPDATE board
+        SET board_hit_cnt = board_hit_cnt + 1
+        WHERE board_idx = #{boardIdx}
+    </select>
+
+    <!-- 추천 취소시 -->
+    <update id="updateLikeCancel" parameterType="int">
+        UPDATE board
+        SET board_like_cnt = board_like_cnt - 1
+        WHERE board_idx = #{boardIdx}
+    </update>
+
+    <!--    게시판 상세글    -->
+    <select id="detailBoardList" resultType="com.bitc.springproject.dto.BoardDto">
+        SELECT b.*, c.category_name
+        FROM board AS b
+                 JOIN category AS c ON c.category_idx = b.category_idx
+        WHERE board_idx = #{boardIdx}
+    </select>
+
+    <!--    게시글 업데이트    -->
+    <update id="updateBoard" parameterType="com.bitc.springproject.dto.BoardDto">
+        UPDATE board
+        SET board_category  = #{boardCategory},
+            board_title     = #{boardTitle},
+            board_contents  = #{boardContents},
+            board_update_dt = NOW()
+        WHERE board_idx = #{boardIdx}
+    </update>
+
+    <!--    게시글 삭제    -->
+    <update id="deleteBoard" parameterType="com.bitc.springproject.dto.BoardDto">
+        UPDATE board
+        SET board_deleted_yn = 'Y'
+        WHERE board_idx = #{boardIdx}
+    </update>
+
+    <!--    총 게시글 수    -->
+    <select id="totalCount" resultType="int">
+        SELECT COUNT(board_idx) from board
+    </select>
+
+</mapper>
