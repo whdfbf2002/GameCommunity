@@ -9,4 +9,8 @@ public interface UserService {
     int userIdCheck(UserDto user) throws Exception;
 
     UserDto loginCheck(String userId, String userPw) throws Exception;
+
+    void updateUser(UserDto user) throws Exception;
+
+    UserDto newSession(UserDto userInfo) throws Exception;
 }

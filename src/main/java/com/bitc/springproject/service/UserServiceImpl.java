@@ -27,4 +27,16 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
+    @Override
+    public void updateUser(UserDto user) throws Exception {
+        userMapper.updateUser(user);
+    }
+
+    @Override
+    public UserDto newSession(UserDto userInfo) throws Exception {
+        UserDto user = userMapper.newSession(userInfo);
+        return user;
+    }
+
+
 }

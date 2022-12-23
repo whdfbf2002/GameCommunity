@@ -88,22 +88,38 @@ public class UserController {
         if(session != null){
             session.invalidate();
         }
-        return "redirect:/logout";
+        return "redirect:/";
     }
 
 //     프로필(회원정보) 화면
     @RequestMapping(value = "/profile", method= RequestMethod.GET)
     public ModelAndView profile() throws Exception {
 
-        ModelAndView mv = new ModelAndView("user/profile");
+        ModelAndView mv = new ModelAndView("/user/profile");
+
+        // 사이드바 카테고리
+        List<CategoryDto> categoryList = categoryService.categoryList();
+        mv.addObject( "categoryList", categoryList);
+
         return mv;
     }
-//dsadsa
+
+
 //     회원정보 수정
-    @RequestMapping("/updateUser")
-    public String updateUser(UserDto user) throws Exception {
-//        userMapper.updateUser(user);
-        return "redirect:/profile";
+    @RequestMapping(value = "/profile/update",method = RequestMethod.POST)
+    public String updateUser(UserDto userInfo, HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession();
+        userService.updateUser(userInfo);
+
+        if(session.getAttribute("user") != null){
+            UserDto user = userService.newSession(userInfo);
+            session.setAttribute("user",user);
+        }
+
+        return "redirect:/";
     }
+
+
+
 
 }

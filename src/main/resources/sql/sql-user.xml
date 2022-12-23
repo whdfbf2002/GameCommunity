@@ -33,12 +33,16 @@
 
     <update id="updateUser" parameterType="com.bitc.springproject.dto.UserDto">
         UPDATE user
-        SET user_id    = #{userId},
-            user_pw    = #{userPw},
-            user_name  = #{userName},
+        SET user_name  = #{userName},
             user_email = #{userEmail}
-        WHERE user_idx = #{userIdx}
+        WHERE user_id  = #{userId}
     </update>
 
+
+    <select id="newSession" resultType="com.bitc.springproject.dto.UserDto" parameterType="String">
+        SELECT *
+        FROM user
+        WHERE user_id = #{userId}
+    </select>
 
 </mapper>
