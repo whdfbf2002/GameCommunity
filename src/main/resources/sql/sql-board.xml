@@ -8,7 +8,7 @@
     <!--    전체 게시판 리스트    -->
     <select id="selectBoardList" resultType="com.bitc.springproject.dto.BoardDto">
         SELECT b.board_idx, b.board_title, b.board_contents, b.board_user_name, b.board_hit_cnt, b.board_like_cnt,
-               b.comment_idx, b.board_category, c.category_name, b.category_idx,
+               b.comment_idx, b.board_category, c.category_name, b.category_idx, b.board_user_id,
         (CASE
             WHEN (b.board_create_dt BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN DATE_FORMAT(b.board_create_dt, '%H:%i')
             ELSE DATE_FORMAT(b.board_create_dt, '%Y.%m.%d')
@@ -22,7 +22,7 @@
     <!--    세부 게시판 리스트    -->
     <select id="categoryBoardList" resultType="com.bitc.springproject.dto.BoardDto">
         SELECT b.board_idx, b.board_title, b.board_contents, b.board_user_name, b.board_hit_cnt, b.board_like_cnt,
-               b.comment_idx, b.board_category, c.category_name,
+               b.comment_idx, b.board_category, c.category_name, b.board_user_id,
                (CASE
                     WHEN (b.board_create_dt BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN DATE_FORMAT(b.board_create_dt, '%H:%i')
                     ELSE DATE_FORMAT(b.board_create_dt, '%Y.%m.%d')
@@ -33,11 +33,27 @@
         ORDER BY board_idx DESC
     </select>
 
+    <!-- 말머리별 게시판 리스트 -->
+    <select id="subBoardList" resultType="com.bitc.springproject.dto.BoardDto">
+        SELECT b.board_idx, b.board_title, b.board_contents, b.board_user_name, b.board_hit_cnt, b.board_like_cnt,
+               b.comment_idx, b.board_category, c.category_name, b.board_user_id,
+               (CASE
+                    WHEN (b.board_create_dt BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN DATE_FORMAT(b.board_create_dt, '%H:%i')
+                    ELSE DATE_FORMAT(b.board_create_dt, '%Y.%m.%d')
+                   END) AS board_create_dt
+        FROM board AS b
+                 JOIN category AS c ON c.category_idx = b.category_idx
+        WHERE board_deleted_yn = 'N' AND b.board_category = #{boardCategory}
+        ORDER BY board_idx DESC
+    </select>
+
+
+
     <!--    글쓰기    -->
     <insert id="insertBoard" parameterType="com.bitc.springproject.dto.BoardDto">
         INSERT INTO board
-        (board_category, board_title, board_contents, board_user_name, board_create_dt, category_idx)
-        VALUES (#{boardCategory}, #{boardTitle}, #{boardContents}, #{boardUserName}, NOW(), #{categoryIdx})
+        (board_category, board_title, board_contents, board_user_name, board_create_dt, category_idx, board_user_id)
+        VALUES (#{boardCategory}, #{boardTitle}, #{boardContents}, #{boardUserName}, NOW(), #{categoryIdx}, #{boardUserId})
 
     </insert>
 
@@ -59,7 +75,7 @@
     <select id="detailBoardList" resultType="com.bitc.springproject.dto.BoardDto">
         SELECT b.*, c.category_name
         FROM board AS b
-                 JOIN category AS c ON c.category_idx = b.category_idx
+        JOIN category AS c ON c.category_idx = b.category_idx
         WHERE board_idx = #{boardIdx}
     </select>
 
@@ -80,9 +96,40 @@
         WHERE board_idx = #{boardIdx}
     </update>
 
-    <!--    총 게시글 수    -->
-    <select id="totalCount" resultType="int">
-        SELECT COUNT(board_idx) from board
+
+<!--    댓글 보기-->
+    <select id="commentList" resultType="com.bitc.springproject.dto.CommentDto">
+        <![CDATA[
+            SELECT c.comment_idx, c.comment_board_idx, c.comment_user_id, c.comment_contents, u.user_name,
+                (CASE
+                    WHEN TIMESTAMPDIFF(MINUTE, c.comment_create_dt, NOW()) <= 0 THEN '방금 전'
+                    WHEN TIMESTAMPDIFF(MINUTE, c.comment_create_dt, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, c.comment_create_dt, NOW()), '분 전')
+                    WHEN TIMESTAMPDIFF(HOUR, c.comment_create_dt, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, c.comment_create_dt, NOW()), '시간 전')
+                    WHEN TIMESTAMPDIFF(DAY, c.comment_create_dt, NOW()) < 30 THEN CONCAT(TIMESTAMPDIFF(DAY, c.comment_create_dt, NOW()), '일 전')
+                    ELSE CONCAT(TIMESTAMPDIFF(MONTH, c.comment_create_dt, NOW()), '달 전')
+                END) AS comment_create_dt
+
+            FROM comment as c
+            JOIN user AS u ON u.user_id = c.comment_user_id
+            WHERE c.comment_board_idx = #{commentBoardIdx}
+        ]]>
+    </select>
+
+
+<!--    댓글 작성-->
+    <insert id="insertComment" parameterType="com.bitc.springproject.dto.CommentDto">
+        INSERT INTO comment
+        (comment_board_idx, comment_user_id, comment_contents, comment_create_dt)
+        VALUES (#{commentBoardIdx}, #{commentUserId}, #{commentContents}, NOW())
+    </insert>
+
+
+
+    <!--    댓글 수    -->
+    <select id="countComment" resultType="int">
+        SELECT COUNT(comment_board_idx)
+        FROM comment
+        WHERE comment_board_idx = #{commentBoardIdx}
     </select>
 
 </mapper>

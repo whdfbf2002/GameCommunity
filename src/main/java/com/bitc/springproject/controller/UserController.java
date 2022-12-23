@@ -65,7 +65,7 @@ public class UserController {
 
 //    로그인 처리
     @ResponseBody
-    @RequestMapping(value = "/login/check", method= RequestMethod.POST)
+    @RequestMapping(value = "/login", method= RequestMethod.POST)
     public Object userLogin(@RequestParam("userId") String userId, @RequestParam("userPw") String userPw, HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession();
         UserDto userDto = userService.loginCheck(userId, userPw);

@@ -33,43 +33,48 @@
     <div class="row">
       <aside th:replace="layout/sidebarLeft :: leftSidebar(${categoryList})"></aside>
       <div class="col-sm-8 section-inner">
-        <div id="boardTitle" class="container">
-          <h4>게시글 수정</h4>
-        </div>
-        <form id="frm" method="post">
-          <div class="d-flex col-auto mt-4 gap-3">
-            <div class="form-control" style="height: 50px">
-              <p class="mt-2" th:text="${board.categoryName}"></p>
-            </div>
-            <select name="boardCategory" class="form-select" style="height: 50px">
-              <div th:each="sub : ${subCategory}">
-                <div th:if="${sub.categoryIdx} == ${board.categoryIdx}">
-                  <option th:text="${sub.subCategoryName}" th:value="${sub.subCategoryName}"></option>
-                </div>
-                <div th:unless="${sub.categoryIdx} == ${board.categoryIdx}"></div>
+        <div th:if="${session.user.userId} == ${board.boardUserId}">
+          <div id="boardTitle" class="container">
+            <h4>게시글 수정</h4>
+          </div>
+          <form id="frm" method="post">
+            <div class="d-flex col-auto mt-4 gap-3">
+              <div class="form-control" style="height: 50px">
+                <p class="mt-2" th:text="${board.categoryName}"></p>
               </div>
-            </select>
-          </div>
+              <select name="boardCategory" class="form-select" style="height: 50px">
+                <div th:each="sub : ${subCategory}">
+                  <div th:if="${sub.categoryIdx} == ${board.categoryIdx}">
+                    <option th:text="${sub.subCategoryName}" th:value="${sub.subCategoryName}"></option>
+                  </div>
+                  <div th:unless="${sub.categoryIdx} == ${board.categoryIdx}"></div>
+                </div>
+              </select>
+            </div>
 
-          <div class="form-floating my-3">
-            <input th:value="${board.boardTitle}" type="text" class="form-control" name="boardTitle" placeholder="제목">
-            <label for="contents">글 제목</label>
-          </div>
+            <div class="form-floating my-3">
+              <input th:value="${board.boardTitle}" type="text" class="form-control" name="boardTitle" placeholder="제목">
+              <label for="contents">글 제목</label>
+            </div>
 
-          <div class="form-floating my-3">
+            <div class="form-floating my-3">
             <textarea row="15" class="form-control" id="contents" name="boardContents"
                       placeholder="내용을 입력하세요" style="height: 300px" th:text="${board.boardContents}"></textarea>
-            <label for="contents">글 내용</label>
-          </div>
-          <div class="d-flex justify-content-between mt-2">
-            <div>
-              <button type="reset" class="btn btn-primary" id="btn-cancel">취소</button>
-              <button type="submit" class="btn btn-primary" id="btn-edit">등록</button>
+              <label for="contents">글 내용</label>
             </div>
-          </div>
-          <input type="hidden" id="idx" th:value="${board.boardIdx}">
-          <input type="hidden" id="method" name="_method">
-        </form>
+            <div class="d-flex justify-content-between mt-2">
+              <div>
+                <button type="reset" class="btn btn-primary" id="btn-cancel">취소</button>
+                <button type="submit" class="btn btn-primary" id="btn-edit">등록</button>
+              </div>
+            </div>
+            <input type="hidden" id="idx" th:value="${board.boardIdx}">
+            <input type="hidden" id="method" name="_method">
+          </form>
+        </div>
+        <div th:unless="${session.user.userId} == ${board.boardUserId}">
+          <h1>권한이 없습니다.</h1>
+        </div>
       </div>
       <aside th:replace="layout/sidebarRight :: sidebarRight"></aside>
     </div>

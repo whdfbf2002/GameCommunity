@@ -1,6 +1,7 @@
 package com.bitc.springproject.mapper;
 
 import com.bitc.springproject.dto.BoardDto;
+import com.bitc.springproject.dto.CommentDto;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -16,5 +17,6 @@ public interface BoardMapper {
     void boardHitCnt(int idx) throws Exception;
     void updateBoard(BoardDto board) throws Exception;
     void deleteBoard(int idx) throws Exception;
-
+    List<CommentDto> commentList(int commentBoardIdx) throws Exception;
+    void insertComment(CommentDto comment) throws Exception;
 }

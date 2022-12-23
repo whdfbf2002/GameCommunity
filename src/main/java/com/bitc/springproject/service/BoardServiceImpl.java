@@ -1,6 +1,7 @@
 package com.bitc.springproject.service;
 
 import com.bitc.springproject.dto.BoardDto;
+import com.bitc.springproject.dto.CommentDto;
 import com.bitc.springproject.mapper.BoardMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -41,6 +42,21 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void deleteBoard(int idx) throws Exception {
         boardMapper.deleteBoard(idx);
+    }
+
+    @Override
+    public List<CommentDto> commentList(int commentBoardIdx) throws Exception {
+        return boardMapper.commentList(commentBoardIdx);
+    }
+
+    @Override
+    public void insertComment(int commentBoardIdx, String commentUserId, String commentContents) throws Exception {
+        CommentDto comment = new CommentDto();
+        comment.setCommentBoardIdx(commentBoardIdx);
+        comment.setCommentUserId(commentUserId);
+        comment.setCommentContents(commentContents);
+
+        boardMapper.insertComment(comment);
     }
 
 

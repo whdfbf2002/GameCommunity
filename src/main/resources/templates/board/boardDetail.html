@@ -18,42 +18,89 @@
 
       $("#btn-delete").on("click", function () {
         $("#method").val("delete");
-        const frm = $("#frm")[0];
+        const frm = $("#frm-delete")[0];
         frm.action = "/board/delete/" + $("#idx").val();
         frm.submit();
       });
 
+
+      $("#input-login").on("click", function () {
+        alert('로그인이 필요합니다.');
+        location.href = "/login";
+      });
+
+// 추천
       $("#btn-like").on("click", function () {
         let boardIdx = $("#idx").val();
         let userId = $("#userId").val();
 
         $.ajax({
-          type : "POST",
-          url : "/board/updateLike",
-          dataType : "json",
-          data : {'boardIdx' : boardIdx, 'userId' : userId},
-          error : function(){
-            alert("통신 에러");
+          type: "POST",
+          url: "/board/updateLike",
+          data: {'boardIdx': boardIdx, 'userId': userId},
+          error: function () {
+            alert("로그인이 필요합니다.");
+            location.href = '/login';
           },
-          success : function(likeCheck) {
+          success: function (likeCheck) {
 
-            if(likeCheck == 0){
-              alert("추천완료.");
+            if (likeCheck == 0) {
+
               location.reload();
-            }
-            else if (likeCheck == 1){
-              alert("추천취소");
+            } else if (likeCheck == 1) {
               location.reload();
-
-
             }
           }
         });
 
       });
+    });
+  </script>
+  <script th:inline="javascript">
+    $(document).ready(function () {
+      // 댓글
+      $("#btn-submit").on("click", function () {
 
+        const commentBoardIdx = $("#commentBoardIdx").val();
+        const commentContents = $("#commentContents").val();
+        const commentUserId = $("#commentUserId").val();
 
+        const datas = {
+          "commentContents": commentContents,
+          "commentUserId": commentUserId,
+          "commentBoardIdx": commentBoardIdx
+        };
 
+        $.ajax({
+          url: "/board/insertComment",
+          type: "POST",
+          data: datas,
+          success: function (data) {
+            $('#commentContents').val('');
+
+            if (data.length > 0) {
+              $("#comments").empty();
+
+              let comments = '';
+                comments = '<div class="mt-2">';
+                comments += '<span style="font-weight: bold"> + data.commentUserId + </span>';
+                comments += '<span class="ms-2" style="color: gray; font-size: 14px"> + data[i].commentCreateDt + </span>';
+                comments += '</div>';
+                comments += '<div class="my-2">';
+                comments += '<span> + data[i].commentContents + </span>';
+                comments += '</div>';
+                comments += '</div>';
+
+                $("#comments").append(comments);
+              }
+            }
+
+          },
+          error: function () {
+            alert('통신실패');
+          }
+        });
+      });
     });
   </script>
 
@@ -68,9 +115,9 @@
         <div id="boardTitle" class="container mb-3">
           <h4 th:text="${board.categoryName}"></h4>
         </div>
-        <form id="frm" method="post">
-          <div class="row p-2">
-            <div class="card card-header pt-0">
+        <div class="row p-2">
+          <div class="card card-header pt-0">
+            <form id="frm-delete" method="post">
               <div class="row">
                 <div class="col-sm-1 p-1 m-3 rounded-2 text-center" style="border: solid 1px darkgray; font-size: 16px">
                   <span th:text="${board.boardCategory}" style="vertical-align: center"></span>
@@ -96,30 +143,81 @@
                 <textarea class="form-control" rows="15" id="boardContents" name="boardContents"
                           th:text="${board.boardContents}" readonly></textarea>
               </div>
+              <input type="hidden" id="method" name="_method">
+            </form>
+
+            <!--              추천 -->
+            <form id="frm-like" method="post">
               <div class="row d-flex justify-content-center my-3">
-                <ul class="list-group col-auto">
-                  <li class="list-group-item d-flex justify-content-between align-items-center" type="button" id="btn-like">
-                    추천
-                    <span class="badge bg-primary rounded-pill2 ms-2" th:text="${board.boardLikeCnt}" id="likeCnt"></span>
-                  </li>
-                </ul>
+                <button type="button" id="btn-like" class="col-auto p-0" style="border: none">
+                  <ul class="list-group col-auto">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      추천
+                      <span class="badge bg-primary rounded-pill2 ms-2" th:text="${board.boardLikeCnt}"
+                            id="likeCnt"></span>
+                    </li>
+                  </ul>
+                </button>
               </div>
-            </div>
+            </form>
           </div>
-          <input type="hidden" id="method" name="_method">
-        </form>
+
+          <!--          댓글 부분-->
+          <div class="card card-header mt-3 p-3">
+            <form method="post" id="frm-comment">
+              <h5 class="mt-2">댓글</h5>
+              <div id="comments" th:if="${#lists.size(commentList)} > 0" th:each="comment : ${commentList}"
+                   style="border-bottom: solid 1px lightgray">
+                <div class="mt-2">
+                  <span th:text="${comment.userName}" style="font-weight: bold"></span>
+                  <span class="ms-2" th:text="${comment.commentCreateDt}" style="color: gray; font-size: 14px"></span>
+                </div>
+                <div class="my-2">
+                  <span th:text="${comment.commentContents}"></span>
+                </div>
+              </div>
+              <div th:unless="${#lists.size(commentList)} > 0" style="border-bottom: solid 1px lightgray"></div>
+
+              <div class="rounded-2 bg-white p-3 mb-3 mt-4" style="border: solid 1px darkgray">
+                <div th:if="${session.user} != null">
+                  <p class="fw-bold" th:text="${session.user.userName}"></p>
+                  <input type="hidden" id="commentBoardIdx" th:value="${board.boardIdx}">
+                  <input type="hidden" id="commentUserId" th:value="${session.user.userId}">
+                  <input type="text" id="commentContents" placeholder="내용을 입력하세요"
+                         style="display: block; width: 100%; outline: none; border: none;">
+                  <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary col-sm-1" id="btn-submit">등록</button>
+                  </div>
+                </div>
+                <div th:unless="${session.user} != null">
+                  <input type="text" id="input-login" placeholder="로그인이 필요한 서비스입니다."
+                         style="display: block; width: 100%; outline: none; border: none;" readonly>
+                  <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary col-sm-1">등록</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
 
 
-
+        </div>
 
         <div class="col-auto d-flex justify-content-between mt-3">
-          <input type="hidden" id="idx" th:value="${board.boardIdx}">
-          <div class="d-flex">
-            <a href="/board/update/" th:attrappend="href=${board.boardIdx}" class="btn btn-primary me-2" type="button">수정</a>
-            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#boardDelete">삭제</button>
-          </div>
           <div class="d-flex">
             <button class="btn btn-primary" type="button" id="btn-list">목록</button>
+          </div>
+          <div th:if="${session.user} != null">
+            <input type="hidden" id="idx" th:value="${board.boardIdx}">
+            <input type="hidden" id="userId" th:value="${session.user.userId}">
+            <div th:if="${session.user.userId} == ${board.boardUserId}">
+              <div class="d-flex">
+                <a href="/board/update/" th:attrappend="href=${board.boardIdx}" class="btn btn-primary me-2"
+                   type="button">수정</a>
+                <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#boardDelete">삭제
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -133,7 +231,6 @@
 
 <footer th:replace="layout/footer :: mainFooter">
 </footer>
-
 
 
 <div class="modal fade" id="boardDelete" tabindex="-1" aria-labelledby="boardDeleteLabel" aria-hidden="true">

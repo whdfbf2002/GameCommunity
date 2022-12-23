@@ -19,21 +19,28 @@
         WHERE board_idx = #{boardIdx}
     </update>
 
+    <insert id="insertLike" parameterType="com.bitc.springproject.dto.LikeDto">
+        INSERT INTO tbl_like (board_idx , user_id)
+        VALUES (#{boardIdx} ,#{userId})
+    </insert>
+
     <!-- 게시글 추천취소 시 delete -->
     <delete id="deleteLike" parameterType="com.bitc.springproject.dto.LikeDto">
         DELETE FROM tbl_like
         WHERE board_idx = #{boardIdx} AND user_id = #{userId}
     </delete>
 
+
+
     <!-- 게시글 추천 시 Check를 1로 만들어서 중복방지-->
     <update id="updateLikeCheck" parameterType="com.bitc.springproject.dto.LikeDto">
         UPDATE tbl_like SET like_check = 1
-        WHERE board_idx = #{bno} and user_id = #{userId}
+        WHERE board_idx = #{boardIdx} and user_id = #{userId}
     </update>
 
     <!-- 게시글 추천취소 시 다시 0  -->
     <update id="updateLikeCheckCancel" parameterType="com.bitc.springproject.dto.LikeDto">
-        UPDATE MP_LIKE SET like_check = 0
+        UPDATE tbl_like SET like_check = 0
         WHERE board_idx = #{boardIdx} AND user_id = #{userId}
     </update>
 

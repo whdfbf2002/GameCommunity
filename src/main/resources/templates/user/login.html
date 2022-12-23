@@ -17,7 +17,7 @@
 
         $.ajax({
           type: "post",
-          url : "/login/check",
+          url : "/login",
           data : {"userId": userId, "userPw": userPw},
           success: function (data) {
             if (data == 0) {
@@ -25,7 +25,12 @@
             }
             else {
               location.href="/";
+
               alert(data.userId + "님 반갑습니다.");
+
+              // history.back();
+              // location.reload();
+
             }
           },
           error: function () {

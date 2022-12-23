@@ -2,6 +2,7 @@ package com.bitc.springproject.controller;
 
 import com.bitc.springproject.dto.BoardDto;
 import com.bitc.springproject.dto.CategoryDto;
+import com.bitc.springproject.dto.CommentDto;
 import com.bitc.springproject.service.BoardService;
 import com.bitc.springproject.service.CategoryService;
 import com.bitc.springproject.service.LikeService;
@@ -28,6 +29,9 @@ public class BoardController {
     public ModelAndView openAllBoardList(@RequestParam(required = false, defaultValue = "1", value = "pageNum") int pageNum) throws Exception {
         ModelAndView mv = new ModelAndView("board/allBoardList");
 
+//        int countComment = boardService.countComment(commentBoardIdx);
+//        mv.addObject("countComment", countComment);
+
         // 페이지네이션
         PageInfo<BoardDto> boardList = new PageInfo<>(boardService.selectBoardList(pageNum), 10);
         mv.addObject("boardList", boardList);
@@ -44,6 +48,7 @@ public class BoardController {
     public ModelAndView openBoardList(@RequestParam(required = false, defaultValue = "1", value = "pageNum") int pageNum,
                                       @RequestParam(required = false, defaultValue = "", value = "cateIdx") int categoryIdx) throws Exception {
         ModelAndView mv = new ModelAndView("board/boardList");
+
 
         // 페이지네이션
         PageInfo<BoardDto> categoryBoardList = new PageInfo<>(boardService.categoryBoardList(pageNum, categoryIdx), 10);
@@ -62,6 +67,37 @@ public class BoardController {
         mv.addObject( "categoryList", categoryList);
 
         return mv;
+    }
+
+    //    게시판 상세 보기
+    @RequestMapping(value = "/board/{idx}", method = RequestMethod.GET)
+    public ModelAndView openBoardDetail(@PathVariable("idx") int idx) throws Exception {
+        ModelAndView mv = new ModelAndView("board/boardDetail");
+
+        BoardDto board = boardService.detailBoardList(idx);
+        mv.addObject("board", board);
+
+        List<CategoryDto> categoryList = categoryService.categoryList();
+        mv.addObject( "categoryList", categoryList);
+
+        // 댓글 보기
+        List<CommentDto> commentList = boardService.commentList(idx);
+        mv.addObject("commentList", commentList);
+
+        return mv;
+    }
+
+    // 댓글 등록
+    @ResponseBody
+    @RequestMapping(value = "/board/insertComment", method = RequestMethod.POST)
+    public Object insertComment(@RequestParam("commentBoardIdx") int commentBoardIdx,
+                                @RequestParam("commentUserId") String commentUserId,
+                                @RequestParam("commentContents") String commentContents) throws Exception {
+
+        boardService.insertComment(commentBoardIdx, commentUserId, commentContents);
+        List<CommentDto> commentList = boardService.commentList(commentBoardIdx);
+
+        return commentList;
     }
 
 //    글쓰기 페이지
@@ -87,31 +123,20 @@ public class BoardController {
     @RequestMapping(value ="/board/write", method = RequestMethod.POST)
     public String insertBoard(BoardDto board) throws Exception {
         boardService.insertBoard(board);
+
         return "redirect:/board/all";
     }
 
 
-//    게시판 상세 보기
-    @RequestMapping(value = "/board/{idx}", method = RequestMethod.GET)
-    public ModelAndView openBoardDetail(@PathVariable("idx") int idx) throws Exception {
-        ModelAndView mv = new ModelAndView("board/boardDetail");
-
-        BoardDto board = boardService.detailBoardList(idx);
-        mv.addObject("board", board);
-
-        List<CategoryDto> categoryList = categoryService.categoryList();
-        mv.addObject( "categoryList", categoryList);
-
-        return mv;
-    }
-
+//    게시글 추천
     @ResponseBody
     @RequestMapping(value = "/board/updateLike" , method = RequestMethod.POST)
     public int updateLike(int boardIdx, String userId) throws Exception{
 
         int likeCheck = likeService.likeCheck(boardIdx, userId);
+
         if(likeCheck == 0) {
-            //좋아요 처음누름
+            //추천 처음누름
             likeService.insertLike(boardIdx, userId); //like테이블 삽입
             likeService.updateLike(boardIdx);	//게시판테이블 +1
             likeService.updateLikeCheck(boardIdx, userId);//like테이블 구분자 1
@@ -125,7 +150,8 @@ public class BoardController {
     }
 
 
-//    게시판 업데이트 보기
+
+//    게시판 업데이트 페이지
     @RequestMapping(value = "/board/update/{idx}", method = RequestMethod.GET)
     public ModelAndView openUpdateBoard(@PathVariable("idx") int idx) throws Exception {
         ModelAndView mv = new ModelAndView("board/boardUpdate");
@@ -144,24 +170,26 @@ public class BoardController {
     }
 
 
+//    게시글 수정
     @RequestMapping(value = "/board/update/{idx}", method = RequestMethod.PUT)
     public String updateBoard(BoardDto board, @PathVariable int idx) throws Exception {
+
+        BoardDto boardDto = boardService.detailBoardList(idx);
         board.setBoardIdx(idx);
         boardService.updateBoard(board);
 
-        return "redirect:/board/all";
+
+        return "redirect:/board?cateIdx=" + boardDto.getCategoryIdx();
     }
 
 
-
-
-
-
+//     게시글 삭제
     @RequestMapping(value = "/board/delete/{idx}", method = RequestMethod.DELETE)
     public String deleteBoard(@PathVariable("idx") int idx) throws Exception {
         boardService.deleteBoard(idx);
+        BoardDto boardDto = boardService.detailBoardList(idx);
 
-        return "redirect:/board/all";
+        return "redirect:/board?cateIdx=" + boardDto.getCategoryIdx();
     }
 
 }

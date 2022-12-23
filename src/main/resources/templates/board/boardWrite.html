@@ -30,6 +30,7 @@
         </div>
         <form action="/board/write" method="post">
           <input type="hidden" name="boardUserName" th:value="${session.user.userName}">
+          <input type="hidden" name="boardUserId" th:value="${session.user.userId}">
 
           <div class="d-flex col-auto mt-4 gap-3">
             <div class="form-control" style="height: 50px">
