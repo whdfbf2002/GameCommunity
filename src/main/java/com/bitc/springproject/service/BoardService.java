@@ -2,6 +2,7 @@ package com.bitc.springproject.service;
 
 import com.bitc.springproject.dto.BoardDto;
 import com.bitc.springproject.dto.CommentDto;
+import com.bitc.springproject.dto.GameDto;
 import com.bitc.springproject.dto.LikeDto;
 import com.github.pagehelper.Page;
 
@@ -27,4 +28,9 @@ public interface BoardService {
     List<CommentDto> commentList(int commentBoardIdx) throws Exception;
 
     void insertComment(int commentBoardIdx, String commentUserId, String commentContents) throws Exception;
+
+    Page<BoardDto> limitBoard() throws Exception;
+
+    List<BoardDto> limitNotice() throws Exception;
+
 }

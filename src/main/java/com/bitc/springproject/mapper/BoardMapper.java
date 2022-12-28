@@ -19,4 +19,8 @@ public interface BoardMapper {
     void deleteBoard(int idx) throws Exception;
     List<CommentDto> commentList(int commentBoardIdx) throws Exception;
     void insertComment(CommentDto comment) throws Exception;
+
+    Page<BoardDto> limitBoard() throws Exception;
+
+    List<BoardDto> limitNotice() throws Exception;
 }

@@ -9,13 +9,16 @@
     <select id="selectBoardList" resultType="com.bitc.springproject.dto.BoardDto">
         SELECT b.board_idx, b.board_title, b.board_contents, b.board_user_name, b.board_hit_cnt, b.board_like_cnt,
                b.comment_idx, b.board_category, c.category_name, b.category_idx, b.board_user_id,
-        (CASE
-            WHEN (b.board_create_dt BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN DATE_FORMAT(b.board_create_dt, '%H:%i')
-            ELSE DATE_FORMAT(b.board_create_dt, '%Y.%m.%d')
-        END) AS board_create_dt
+            (SELECT COUNT(comment_board_idx)
+            FROM comment
+            WHERE comment_board_idx = board_idx) AS comment_count,
+            (CASE
+                WHEN (b.board_create_dt BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN DATE_FORMAT(b.board_create_dt, '%H:%i')
+                ELSE DATE_FORMAT(b.board_create_dt, '%Y.%m.%d')
+            END) AS board_create_dt
         FROM board AS b
         JOIN category AS c ON c.category_idx = b.category_idx
-        WHERE board_deleted_yn = 'N'
+        WHERE board_deleted_yn = 'N' AND b.category_idx != 7
         ORDER BY board_idx DESC
     </select>
 
@@ -23,10 +26,13 @@
     <select id="categoryBoardList" resultType="com.bitc.springproject.dto.BoardDto">
         SELECT b.board_idx, b.board_title, b.board_contents, b.board_user_name, b.board_hit_cnt, b.board_like_cnt,
                b.comment_idx, b.board_category, c.category_name, b.board_user_id,
-               (CASE
-                    WHEN (b.board_create_dt BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN DATE_FORMAT(b.board_create_dt, '%H:%i')
-                    ELSE DATE_FORMAT(b.board_create_dt, '%Y.%m.%d')
-                   END) AS board_create_dt
+            (SELECT COUNT(comment_board_idx)
+            FROM comment
+            WHERE comment_board_idx = board_idx) AS comment_count,
+            (CASE
+                WHEN (b.board_create_dt BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN DATE_FORMAT(b.board_create_dt, '%H:%i')
+                ELSE DATE_FORMAT(b.board_create_dt, '%Y.%m.%d')
+            END) AS board_create_dt
         FROM board AS b
                  JOIN category AS c ON c.category_idx = b.category_idx
         WHERE board_deleted_yn = 'N' AND b.category_idx = #{categoryIdx}
@@ -131,5 +137,39 @@
         FROM comment
         WHERE comment_board_idx = #{commentBoardIdx}
     </select>
+
+    <!--    게시물 5개까지 불러오기-->
+    <select id="limitNotice" resultType="com.bitc.springproject.dto.BoardDto">
+        SELECT b.board_idx, b.board_title, b.board_contents, b.board_user_name, b.board_hit_cnt, b.board_like_cnt,
+               b.comment_idx, b.board_category, c.category_name, b.board_user_id,
+               (SELECT COUNT(comment_board_idx)
+                FROM comment
+                WHERE comment_board_idx = board_idx) AS comment_count,
+               (CASE
+                    WHEN (b.board_create_dt BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN DATE_FORMAT(b.board_create_dt, '%H:%i')
+                    ELSE DATE_FORMAT(b.board_create_dt, '%Y.%m.%d')
+                   END) AS board_create_dt
+        FROM board AS b
+                 JOIN category AS c ON c.category_idx = b.category_idx
+        WHERE board_deleted_yn = 'N' AND b.category_idx = 7
+        ORDER BY board_idx DESC limit 5
+    </select>
+
+    <select id="limitBoard" resultType="com.bitc.springproject.dto.BoardDto">
+        SELECT b.board_idx, b.board_title, b.board_contents, b.board_user_name, b.board_hit_cnt, b.board_like_cnt,
+               b.comment_idx, b.board_category, c.category_name, b.board_user_id,
+               (SELECT COUNT(comment_board_idx)
+                FROM comment
+                WHERE comment_board_idx = board_idx) AS comment_count,
+               (CASE
+                    WHEN (b.board_create_dt BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN DATE_FORMAT(b.board_create_dt, '%H:%i')
+                    ELSE DATE_FORMAT(b.board_create_dt, '%Y.%m.%d')
+                   END) AS board_create_dt
+        FROM board AS b
+                 JOIN category AS c ON c.category_idx = b.category_idx
+        WHERE board_deleted_yn = 'N' AND b.category_idx != 7
+        ORDER BY board_idx DESC limit 5
+    </select>
+
 
 </mapper>

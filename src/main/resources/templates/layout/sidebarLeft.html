@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div class="menu1 rounded-2" th:unless="${session.user} == null">
+    <div class="menu1 rounded-1" th:unless="${session.user} == null">
       <div class="text-center my-4">
         <span th:text="${session.user.userName}" style="font-size: 22px"></span>
         <span style="font-size: 14px"> 님 환영합니다.</span>
@@ -57,7 +57,7 @@
 
     </div>
 
-    <div class="menu2 mt-4 rounded-2">
+    <div class="menu2 mt-4 rounded-1">
       <ul>
         <li class="menu p-3 pe-0" id="toggle-menu">
           <div class="container">

@@ -9,21 +9,434 @@
   <script>
 
   </script>
+  <!--  <style>-->
+  <!--    thead {-->
+  <!--      width: 122px;-->
+  <!--    }-->
+  <!--  </style>-->
 </head>
 <body>
 <aside class="col-sm-2" th:fragment="sidebarRight">
-  <div class="aside-inner">
-    <div class="menu1 rounded-2">
-      <p>목록</p>
-      <ul>
-        <li>목록1</li>
-        <li>목록2</li>
-        <li>목록3</li>
-        <li>목록4</li>
-        <li>목록5</li>
-      </ul>
+  <!--  일단 잠시 주석 처리!-->
+  <!--  <div class="aside-inner">-->
+  <!--    <div class="menu1 rounded-2">-->
+  <!--      <p>목록</p>-->
+  <!--      <ul>-->
+  <!--        <li>목록1</li>-->
+  <!--        <li>목록2</li>-->
+  <!--        <li>목록3</li>-->
+  <!--        <li>목록4</li>-->
+  <!--        <li>목록5</li>-->
+  <!--      </ul>-->
+  <!--    </div>-->
+  <!--  </div>-->
+
+  <!--  <div style="width: 100%;">-->
+  <!--    <ad-shield-inventory> &lt;!&ndash; 광고표시부분 &ndash;&gt;-->
+  <!--      <ad-shield-ads zone_id="88" size="180x150">-->
+  <!--        <section class="ad-right2">-->
+  <!--          <div class="center-part">-->
+  <!--            <script type="text/javascript">INVEN.Ad.showRight('webzine');</script><iframe id="comAdRight" name="comAdRight" width="250" height="250" frameborder="0" marginwidth="0" marginheight="0" topmargin="0" scrolling="no" src="https://zicf.inven.co.kr/RealMedia/ads/adstream_sx.ads/inven/webzine@x63?ipos=comAdRight"></iframe>-->
+  <!--          </div>-->
+  <!--        </section>-->
+  <!--      </ad-shield-ads>-->
+  <!--    </ad-shield-inventory>-->
+
+  <div class="right-menu  asmargin">
+    <div id="webzineRight" class="wideRight" data-right-type="wide">
+      <div id="webzineRightMenu" class="wideRightMenu">
+        <div class="menuGroup" id="inven_popular_community">
+          <div class="link-tab">
+            <ul style="padding-left: 0px">
+              <li class="act" data-tab-type="popular"><span>인기</span> 게임</li>
+            </ul>
+          </div>
+          <div class="reser_wrap" data-tab-content="popular">
+            <div class="content">
+              <a href="https://www.kr.playblackdesert.com/ko-KR/main/index" target="_blank">
+                <div class="thumb">
+                  <img src="/img/gameicon/icon_14x14_black.gif">
+                </div>
+                <div class="txt">
+                  <p>검은사막</p>
+                </div>
+              </a>
+
+              <a href="https://lostark.game.onstove.com/Main" target="_blank">
+                <div class="thumb">
+                  <img src="/img/gameicon/icon_14x14_lostark.gif">
+                </div>
+                <div class="txt">
+                  <p>로스트아크</p>
+                </div>
+              </a>
+              <a href="https://www.leagueoflegends.com/ko-kr/" target="_blank">
+                <div class="thumb">
+                  <img src="/img/gameicon/icon_14x14_lol.gif">
+                </div>
+                <div class="txt">
+                  <p>리그오브레전드</p>
+                </div>
+              </a>
+              <a href="http://monsterhunterworld.com/kr/" target="_blank">
+                <div class="thumb">
+                  <img src="/img/gameicon/icon_14x14_mhf.gif">
+                </div>
+                <div class="txt">
+                  <p>몬스터헌터</p>
+                </div>
+              </a>
+              <a href="https://maplestory.nexon.com/Home/Main" target="_blank">
+                <div class="thumb">
+                  <img src="/img/gameicon/icon_14x14_maple.gif">
+                </div>
+                <div class="txt">
+                  <p>메이플스토리</p>
+                </div>
+              </a>
+              <a href="https://fifaonline4.nexon.com/main/index" target="_blank">
+                <div class="thumb">
+                  <img src="/img/gameicon/icon_14x14_fifaonline4.gif">
+                </div>
+                <div class="txt">
+                  <p>피파 온라인4</p>
+                </div>
+              </a>
+              <a href="https://pubg.game.daum.net/pubg/index.daum" target="_blank">
+                <div class="thumb">
+                  <img src="/img/gameicon/icon_14x14_battlegrounds.gif">
+                </div>
+                <div class="txt">
+                  <p>배틀그라운드</p>
+                </div>
+              </a>
+              <a href="https://playvalorant.com/ko-kr/" target="_blank">
+                <div class="thumb">
+                  <img src="/img/gameicon/icon_14x14_valorant.gif">
+                </div>
+                <div class="txt">
+                  <p>발로란트</p>
+                </div>
+              </a>
+            </div>
+            <a class="more-btn" href="https://game.naver.com/ranking/top/daily" target="_blank">더보기+</a>
+          </div>
+        </div>
+        <script>
+          const $root = $('#inven_popular_community');
+          $root.find('.link-tab li').on('mouseover', function() {
+            const showtab = $(this).data('tab-type');
+            $root.find('.link-tab li').removeClass('act');
+            $(this).addClass('act');
+
+            $root.find(`.reser_wrap`).removeClass('hidden').addClass('hidden');
+            $root.find(`.reser_wrap[data-tab-content=${showtab}]`).removeClass('hidden');
+          });
+        </script>
+        <style>
+          .gameReview.floatGroup {
+            background: #f8f8f8;
+            border: 1px solid #d0d0d0;
+            margin-bottom: 10px;
+            padding: 20px 12px 14px 12px;
+            box-sizing: border-box;
+          }
+
+          .gameReview.floatGroup .title-box {
+            letter-spacing: -0.025em;
+            display: flex;
+            flex-flow: row wrap;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e1e1e1;
+            margin-bottom: 15px;
+            padding-bottom: 11px;
+            box-sizing: border-box;
+          }
+
+          .gameReview.floatGroup .title-box .title {
+            font-size: 14px;
+            color: #000;
+            font-weight: bold;
+          }
+
+          .gameReview.floatGroup .title-box .link {
+            font-size: 12px;
+            color: #a9a9a9;
+          }
+
+          .gameReview.floatGroup .list .item .link {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-between;
+            border-top: 1px solid #e1e1e1;
+            padding: 12px 6px 12px 8px;
+          }
+
+          .gameReview.floatGroup .list .item:first-child .link {
+            border-top: 0;
+            padding-top: 0;
+          }
+
+          .gameReview.floatGroup .list .item:last-child .link {
+            padding-bottom: 0;
+          }
+
+          .gameReview.floatGroup .txt-box {
+            width: calc(100% - 34px);
+            display: flex;
+            flex-flow: column wrap;
+            justify-content: center;
+          }
+
+          .gameReview.floatGroup .txt-box .title {
+            line-height: 1.2em;
+            font-size: 13px;
+            font-weight: bold;
+            color: #3c3c3c;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 96%;
+          }
+
+          .gameReview.floatGroup .txt-box .desc {
+            line-height: 1;
+            font-size: 12px;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            margin-top: 9px;
+            text-overflow: ellipsis;
+            max-width: 96%;
+          }
+
+          .gameReview.floatGroup .score-box {
+            width: 34px;
+          }
+
+          .gameReview.floatGroup .score {
+            width: 34px;
+            height: 34px;
+            position: relative;
+          }
+
+          .gameReview.floatGroup .svg-circle {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: rotate(-90deg);
+            z-index: 2;
+          }
+
+          .gameReview.floatGroup .svg-circle circle {
+            fill: none;
+            stroke: #cccccc;
+            stroke-width: 4;
+            stroke-dasharray: 0;
+            stroke-dashoffset: 0;
+            stroke-linecap: round;
+            transform: translate(2px, 2px);
+            display: block;
+          }
+
+          .gameReview.floatGroup .svg-circle circle:last-child {
+            stroke: #53bd15;
+          }
+
+          .gameReview.floatGroup .percent {
+            line-height: 1.3em;
+            font-size: 13px;
+            font-weight: bold;
+            color: #3c3c3c;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            display: flex;
+            flex-flow: row wrap;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+          }
+
+          .gameReview.floatGroup .type {
+            line-height: 1;
+            text-align: center;
+            font-size: 11px;
+            color: #909090;
+            margin-top: 3px;
+          }
+        </style>
+
+        <div class="gameReview floatGroup">
+          <div class="wrap202GR3">
+            <div class="title-box">
+              <h2 class="w202H w202H-Schedule title">게임 평점</h2>
+              <a href="#" class="link">더보기+</a>
+            </div>
+            <div class="w202M">
+              <ul class="list">
+                <li class="item">
+                  <a href="https://www.inven.co.kr/webzine/news/?game=11362" class="link">
+                    <div class="txt-box">
+                      <div class="title">니드 포 스피드 언바운드</div>
+                      <div class="desc">Need for Speed UNBOUND</div>
+                    </div>
+                    <div class="score-box">
+                      <div class="score">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" xml:space="preserve" class="svg-circle">
+	                                    <circle cx="15" cy="15" r="15"></circle>
+                          <circle cx="15" cy="15" r="15" class="score-circle" style="stroke-dasharray: 94; stroke-dashoffset: 22.56;"></circle>
+	                                </svg>
+                        <div class="percent">7.6</div>
+                      </div>
+                      <div class="type">PS5</div>
+                    </div>
+                  </a>
+                </li>
+                <li class="item">
+                  <a href="https://www.inven.co.kr/webzine/news/?game=9955" class="link">
+                    <div class="txt-box">
+                      <div class="title">칼리스토 프로토콜</div>
+                      <div class="desc">THE CALLISTO PROTOCOL</div>
+                    </div>
+                    <div class="score-box">
+                      <div class="score">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" xml:space="preserve" class="svg-circle">
+	                                    <circle cx="15" cy="15" r="15"></circle>
+                          <circle cx="15" cy="15" r="15" class="score-circle" style="stroke-dasharray: 94; stroke-dashoffset: 14.1;"></circle>
+	                                </svg>
+                        <div class="percent">8.5</div>
+                      </div>
+                      <div class="type">PC</div>
+                    </div>
+                  </a>
+                </li>
+                <li class="item">
+                  <a href="https://www.inven.co.kr/webzine/news/?game=11300" class="link">
+                    <div class="txt-box">
+                      <div class="title">워해머 40K: 다크타이드</div>
+                      <div class="desc">Warhammer40K: Darktide</div>
+                    </div>
+                    <div class="score-box">
+                      <div class="score">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" xml:space="preserve" class="svg-circle">
+	                                    <circle cx="15" cy="15" r="15"></circle>
+                          <circle cx="15" cy="15" r="15" class="score-circle" style="stroke-dasharray: 94; stroke-dashoffset: 16.92;"></circle>
+	                                </svg>
+                        <div class="percent">8.2</div>
+                      </div>
+                      <div class="type">PC</div>
+                    </div>
+                  </a>
+                </li>
+                <li class="item">
+                  <a href="https://www.inven.co.kr/webzine/news/?game=10997" class="link">
+                    <div class="txt-box">
+                      <div class="title">포켓몬스터 스칼렛&amp;바이올렛</div>
+                      <div class="desc">Pokemon Scarlet&amp;Violet</div>
+                    </div>
+                    <div class="score-box">
+                      <div class="score">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" xml:space="preserve" class="svg-circle">
+	                                    <circle cx="15" cy="15" r="15"></circle>
+                          <circle cx="15" cy="15" r="15" class="score-circle" style="stroke-dasharray: 94; stroke-dashoffset: 18.8;"></circle>
+	                                </svg>
+                        <div class="percent">8.0</div>
+                      </div>
+                      <div class="type">Switch</div>
+                    </div>
+                  </a>
+                </li>
+                <li class="item">
+                  <a href="https://www.inven.co.kr/webzine/news/?game=10854" class="link">
+                    <div class="txt-box">
+                      <div class="title">이블 웨스트</div>
+                      <div class="desc">Evil West</div>
+                    </div>
+                    <div class="score-box">
+                      <div class="score">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" xml:space="preserve" class="svg-circle">
+	                                    <circle cx="15" cy="15" r="15"></circle>
+                          <circle cx="15" cy="15" r="15" class="score-circle" style="stroke-dasharray: 94; stroke-dashoffset: 21.62;"></circle>
+	                                </svg>
+                        <div class="percent">7.7</div>
+                      </div>
+                      <div class="type">PC</div>
+                    </div>
+                  </a>
+                </li>
+                <li class="item">
+                  <a href="https://www.inven.co.kr/webzine/news/?game=11409" class="link">
+                    <div class="txt-box">
+                      <div class="title">플러드랜드</div>
+                      <div class="desc">floodland</div>
+                    </div>
+                    <div class="score-box">
+                      <div class="score">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" xml:space="preserve" class="svg-circle">
+	                                    <circle cx="15" cy="15" r="15"></circle>
+                          <circle cx="15" cy="15" r="15" class="score-circle" style="stroke-dasharray: 94; stroke-dashoffset: 23.5;"></circle>
+	                                </svg>
+                        <div class="percent">7.5</div>
+                      </div>
+                      <div class="type">PC</div>
+                    </div>
+                  </a>
+                </li>
+                <li class="item">
+                  <a href="https://www.inven.co.kr/webzine/news/?game=8524" class="link">
+                    <div class="txt-box">
+                      <div class="title">건그레이브 고어</div>
+                      <div class="desc">Gungrave G.O.R.E</div>
+                    </div>
+                    <div class="score-box">
+                      <div class="score">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" xml:space="preserve" class="svg-circle">
+	                                    <circle cx="15" cy="15" r="15"></circle>
+                          <circle cx="15" cy="15" r="15" class="score-circle" style="stroke-dasharray: 94; stroke-dashoffset: 23.5;"></circle>
+	                                </svg>
+                        <div class="percent">7.5</div>
+                      </div>
+                      <div class="type">PC</div>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <script adshield-skip-harvest="">
+          (function () {
+            let svgCircle = [...document.querySelectorAll('.gameReview.floatGroup .svg-circle .score-circle')];
+            //퍼센테이지 추가
+            svgCircle.forEach((ele) => {
+              let circleTotalLength = Math.ceil(ele.getTotalLength()),
+                percent = ele.closest('.score').querySelector('.percent');
+              percentNum = Number(percent.innerText) * 10;
+              ele.style = `stroke-dasharray: ${circleTotalLength}; stroke-dashoffset: ${circleTotalLength - circleTotalLength * percentNum / 100}`;
+            });
+          })()
+        </script>
+      </div>
+
+
     </div>
   </div>
+  </div>
+  </div>
+
+
+  <!--  <section class="row-cols-sm-2">-->
+  <!--    -->
+  <!--  </section>-->
+
+
 </aside>
+
 </body>
 </html>

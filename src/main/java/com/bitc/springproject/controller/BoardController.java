@@ -29,9 +29,6 @@ public class BoardController {
     public ModelAndView openAllBoardList(@RequestParam(required = false, defaultValue = "1", value = "pageNum") int pageNum) throws Exception {
         ModelAndView mv = new ModelAndView("board/allBoardList");
 
-//        int countComment = boardService.countComment(commentBoardIdx);
-//        mv.addObject("countComment", countComment);
-
         // 페이지네이션
         PageInfo<BoardDto> boardList = new PageInfo<>(boardService.selectBoardList(pageNum), 10);
         mv.addObject("boardList", boardList);

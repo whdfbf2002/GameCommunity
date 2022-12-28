@@ -34,7 +34,7 @@
                   <td class="col-sm-6 p-3">
                     <a href="/game/" th:attrappend="href=${list.gameIdx}" th:text="${list.gameTitle}" style="font-size: 20px"></a>
                   </td>
-                  <td class="p-3">평점</td>
+                  <td class="p-3" th:text="${list.rating}" style="font-size: 20px"></td>
                 </tr>
 
                 <tr th:unless="${#lists.size(dataList)} > 0">

@@ -4,10 +4,11 @@
 <mapper namespace="com.bitc.springproject.mapper.GameMapper">
     <select id="selectGameList" resultType="com.bitc.springproject.dto.GameDto">
         <![CDATA[
-            SELECT game.game_title, game.game_info, game.game_idx, game_file.stored_file_path
+            SELECT game.game_title, game.game_info, game.game_idx, game_file.stored_file_path,
+                   (SELECT AVG(ROUND(review_rating, 1)) FROM review WHERE review_game_idx = game.game_idx) AS rating
             FROM game as game
             JOIN game_file as game_file ON game.game_idx = game_file.game_idx
-            WHERE deleted_yn = 'N'
+            WHERE deleted_yn = 'N' ORDER BY game.game_idx DESC
         ]]>
     </select>
     
@@ -31,11 +32,47 @@
 
     <select id="selectGameDetail" parameterType="int" resultType="com.bitc.springproject.dto.GameDto">
         <![CDATA[
-            SELECT game.game_title, game.game_info, game.game_idx, game_file.stored_file_path
+            SELECT game.game_title, game.game_info, game.game_idx, game_file.stored_file_path,
+                   (SELECT AVG(ROUND(review_rating, 1)) FROM review WHERE review_game_idx = #{gameIdx}) AS rating
             FROM game as game
             JOIN game_file as game_file ON game.game_idx = game_file.game_idx
             WHERE game.game_idx = #{gameIdx}
         ]]>
     </select>
+
+
+
+    <!--    리뷰 보기-->
+    <select id="reviewList" resultType="com.bitc.springproject.dto.ReviewDto">
+        <![CDATA[
+        SELECT r.review_idx, r.review_game_idx, r.review_user_id, r.review_contents, r.review_rating, u.user_name,
+               DATE_FORMAT(r.review_create_dt, '%Y.%m.%d %H:%i') AS review_create_dt
+        FROM review as r
+                 JOIN user AS u ON u.user_id = r.review_user_id
+        WHERE r.review_game_idx = #{reviewGameIdx}
+        ]]>
+    </select>
+
+
+    <!--    리뷰 작성-->
+    <insert id="insertReview" parameterType="com.bitc.springproject.dto.ReviewDto">
+        INSERT INTO review
+        (review_game_idx, review_user_id, review_contents, review_rating, review_create_dt)
+        VALUES (#{reviewGameIdx}, #{reviewUserId}, #{reviewContents}, #{reviewRating}, NOW())
+    </insert>
+
+
+<!--    개수제한 3개-->
+    <select id="limitGame" resultType="com.bitc.springproject.dto.GameDto">
+        <![CDATA[
+        SELECT game.game_title, game.game_info, game.game_idx, game_file.stored_file_path,
+               (SELECT AVG(ROUND(review_rating, 1)) FROM review WHERE review_game_idx = game.game_idx) AS rating
+        FROM game as game
+                 JOIN game_file as game_file ON game.game_idx = game_file.game_idx
+        WHERE deleted_yn = 'N'
+        ORDER BY game.game_idx DESC limit 3
+        ]]>
+    </select>
+
 
 </mapper>

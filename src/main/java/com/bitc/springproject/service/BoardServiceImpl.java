@@ -2,6 +2,7 @@ package com.bitc.springproject.service;
 
 import com.bitc.springproject.dto.BoardDto;
 import com.bitc.springproject.dto.CommentDto;
+import com.bitc.springproject.dto.GameDto;
 import com.bitc.springproject.mapper.BoardMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -66,6 +67,15 @@ public class BoardServiceImpl implements BoardService {
         return boardMapper.categoryBoardList(categoryIdx);
     }
 
+    @Override
+    public Page<BoardDto> limitBoard() throws Exception {
+        return boardMapper.limitBoard();
+    }
+
+    @Override
+    public List<BoardDto> limitNotice() throws Exception {
+        return boardMapper.limitNotice();
+    }
 
 
 }

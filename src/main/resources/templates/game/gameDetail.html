@@ -9,8 +9,101 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
   <script th:replace="layout/scripts :: scripts"></script>
   <style th:replace="layout/styles :: styles"></style>
-  <script>
 
+  <script>
+    $(document).ready(function () {
+      $("#input-login").on("click", function () {
+        alert('로그인이 필요합니다.');
+        location.href = "/login";
+      });
+    });
+  </script>
+
+
+  <script th:inline="javascript">
+    $(document).ready(function () {
+      $("#btn-submit").on("click", function () {
+
+        const reviewGameIdx = $("#reviewGameIdx").val();
+        const reviewContents = $("#reviewContents").val();
+        const reviewCreateDt = $("#reviewCreateDt").val();
+        const reviewUserId = $("#reviewUserId").val();
+        const userName = $("#userName").val();
+        const reviewRating = $("#reviewRating").val();
+
+        const datas = {
+          "reviewContents": reviewContents,
+          "reviewUserId": reviewUserId,
+          "reviewGameIdx": reviewGameIdx,
+          "reviewCreateDt" : reviewCreateDt,
+          "userName" : userName,
+          "reviewRating" : reviewRating
+        };
+
+        $.ajax({
+          url: "/game/insertReview",
+          type: "POST",
+          data: datas,
+          success: function (data) {
+            $('#reviewContents').val('');
+
+            if (data.length > 0) {
+              $("#reviews").empty();
+
+              for (let i = 0; i < data.length; i++) {
+                let reviews = '';
+                reviews = '<div style="border-bottom: solid 1px lightgray">';
+
+
+                reviews +=' <div className="row">'
+                reviews +=  '<div className="col-sm-1 d-flex">'
+                reviews +=    '<h3 className="">'
+                reviews +=   data[i].reviewRating;
+                reviews +=              ' </h3>'
+                reviews +=  '</div>'
+                reviews +=   '<div className="col-sm">'
+                reviews +=    '<p className="my-2">'
+                reviews += data[i].reviewContents;
+                reviews +=  '</p>'
+                reviews +=    '<span id="userName" style="color: gray; font-size: 15px">'
+                reviews += data[i].userName;
+                reviews +=   '</span>'
+                reviews +=    '<span className="ms-2" style="color: gray; font-size: 14px">|</span>'
+                reviews +=    '<span className="ms-2" id="reviewCreateDt" style="color: gray; font-size: 14px">'
+                reviews += data[i].reviewCreateDt;
+                reviews +=  '</span>'
+                reviews +=  '</div>'
+                reviews += '</div>'
+
+
+
+                // reviews += '<div class="mt-2">';
+                // reviews += '<span style="font-weight: bold">';
+                // reviews += data[i].userName;
+                // reviews += '</span>';
+                // reviews += '<span class="ms-2" style="color: gray; font-size: 14px">&nbsp';
+                // reviews += data[i].reviewCreateDt;
+                // reviews += '</span>';
+                // reviews += '</div>';
+                // reviews += '<div class="my-2">';
+                // reviews += '<span>';
+                // reviews += data[i].reviewContents;
+                // reviews += '</span>';
+                // reviews += '</div>';
+                //
+
+                reviews += '</div>';
+
+                $("#reviews").append(reviews);
+              }
+            }
+          },
+          error: function () {
+            alert('통신실패');
+          }
+        });
+      });
+    });
   </script>
 </head>
 <body>
@@ -20,84 +113,115 @@
     <div class="row">
       <aside th:replace="layout/sidebarLeft :: leftSidebar(${categoryList})"></aside>
       <div class="col-sm-8 section-inner">
+
         <div id="boardTitle" class="container-fluid">
           <h4>게임 리뷰 게시판</h4>
         </div>
-        <div class="container-fluid mt-3 p-0 bg-light">
-          <div class="container p-4">
-            <div class="row gap-3">
-              <div class="col-sm-5">
-                <img th:src="${game.storedFilePath}" style="width: 300px; height: 200px">
+
+
+        <div class="row p-2">
+          <div class="card card-header pt-0">
+            <div class="container p-4">
+              <div class="row gap-3">
+                <div class="col-sm-5">
+                  <img th:src="${game.storedFilePath}" style="width: 300px; height: 200px">
+                </div>
+                <div class="col-sm">
+                  <div class="row">
+                    <div class="col-sm">
+                      <h3 th:text="${game.gameTitle}"></h3>
+                    </div>
+                    <div class="d-flex justify-content-end col-sm-2">
+                      <h2 style="font-weight: bold" th:text="${game.rating}"></h2>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm mt-4">
+                      <p th:text="${game.gameInfo}"></p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="col-sm">
+            </div>
+          </div>
+        </div>
+
+
+        <div class="card card-header mt-3 p-3">
+          <form method="post" id="frm-review">
+            <h5 class="mt-2">리뷰</h5>
+
+            <div id="reviews">
+              <div th:if="${#lists.size(reviewList)} > 0" th:each="review : ${reviewList}"
+                   style="border-bottom: solid 1px lightgray">
+
                 <div class="row">
+                  <div class="col-sm-1 d-flex">
+                    <h3 class="" th:text="${review.reviewRating}"></h3>
+                  </div>
                   <div class="col-sm">
-                    <h3 th:text="${game.gameTitle}"></h3>
-                  </div>
-                  <div class="d-flex justify-content-end col-sm-2">
-                    <h2 style="font-weight: bold">9.1</h2>
+                    <p class="my-2" th:text="${review.reviewContents}"></p>
+                    <span id="userName" th:value="${review.userName}" th:text="${review.userName}"  style="color: gray; font-size: 15px"></span>
+                    <span class="ms-2" style="color: gray; font-size: 14px">|</span>
+                    <span class="ms-2" id="reviewCreateDt" th:value="${review.reviewCreateDt}" th:text="${review.reviewCreateDt}" style="color: gray; font-size: 14px"></span>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-sm mt-4">
-                    <p th:text="${game.gameInfo}"></p>
-                  </div>
+
+
+              </div>
+              <div th:unless="${#lists.size(reviewList)} > 0" style="border-bottom: solid 1px lightgray"></div>
+            </div>
+
+            <div class="rounded-2 bg-white p-3 mb-3 mt-4" style="border: solid 1px darkgray">
+              <div th:if="${session.user} != null">
+                <p class="fw-bold" th:text="${session.user.userName}"></p>
+                <input type="hidden" id="reviewGameIdx" th:value="${game.gameIdx}">
+                <input type="hidden" id="reviewUserId" th:value="${session.user.userId}">
+                <input type="text" id="reviewContents" placeholder="내용을 입력하세요"
+                       style="display: block; width: 100%; outline: none; border: none;">
+                <div class="d-flex justify-content-between mt-3">
+                  <select class="form-select" id="reviewRating" style="width:120px;">
+                    <option selected>--평점--</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                  <button type="button" class="btn btn-secondary col-sm-1" id="btn-submit">등록</button>
+                </div>
+              </div>
+              <div th:unless="${session.user} != null">
+                <input type="text" id="input-login" placeholder="로그인이 필요한 서비스입니다."
+                       style="display: block; width: 100%; outline: none; border: none;" readonly>
+                <div class="d-flex justify-content-between mt-3">
+                  <select class="form-select" style="width:120px;">
+                    <option selected>--평점--</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="3">4</option>
+                    <option value="3">5</option>
+                    <option value="3">6</option>
+                    <option value="3">7</option>
+                    <option value="3">8</option>
+                    <option value="3">9</option>
+                    <option value="3">10</option>
+                  </select>
+                  <button type="button" class="btn btn-secondary col-sm-1">등록</button>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="container-fluid mt-3 bg-light">
-          <div class="row p-3">
-            <div class="col-sm">
-              <table class="table">
-                <tr>
-                  <td>432432</td>
-                  <td>432423432</td>
-                  <td>423432</td>
-                </tr>
-                <tr>
-                  <td>432432</td>
-                  <td>432423432</td>
-                  <td>423432</td>
-                </tr>
-                <tr>
-                  <td>432432</td>
-                  <td>432423432</td>
-                  <td>423432</td>
-                </tr>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="container-fluid p-3 bg-light">
-          <div class="rounded-2 bg-white p-4" style="border: solid 1px darkgray">
-            <form action="/game/review" method="post">
-              <div class="row">
-                <p class="fw-bold">아이디1</p>
-              </div>
-              <input type="text" name="review" placeholder="내용을 입력하세요"
-                     style="display: block; width: 100%; outline: none; border: none;">
-              <div class="d-flex justify-content-between mt-3">
-                <select class="form-select" style="width:120px;">
-                  <option selected>--평점--</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="3">4</option>
-                  <option value="3">5</option>
-                  <option value="3">6</option>
-                  <option value="3">7</option>
-                  <option value="3">8</option>
-                  <option value="3">9</option>
-                  <option value="3">10</option>
-                </select>
-                <button type="submit" class="btn btn-secondary col-sm-1" id="btn-submit">등록</button>
-              </div>
-            </form>
-          </div>
+
+          </form>
         </div>
       </div>
+
       <aside th:replace="layout/sidebarRight :: sidebarRight"></aside>
     </div>
   </div>

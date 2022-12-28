@@ -12,4 +12,6 @@ public class GameDto {
     private String gameInfo;
     private String storedFilePath;
     private List<GameFileDto> fileList;
+
+    private double rating;
 }

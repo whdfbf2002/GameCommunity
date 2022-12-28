@@ -74,8 +74,9 @@
                 <a href="/board/" th:attrappend="href=${item.boardIdx}" style="color: gray"
                     th:text="'[' + ${item.boardCategory} + '] '">제목</a>
                 <a href="/board/" th:attrappend="href=${item.boardIdx}" th:text="${item.boardTitle}">제목</a>
-                <a href="/board/" th:attrappend="href=${item.boardIdx}" style="color: red; font-weight: bold"
-                    th:if="${item.commentIdx} != 0" th:text="' [' + ${item.commentIdx} + ']'"></a>
+                <a href="/board/" th:attrappend="href=${item.boardIdx}" style="color: red; font-weight: bold; font-size: 13px"
+                    th:if="${item.commentCount} != 0" th:text="' [' + ${item.commentCount} + ']'"></a>
+
               </td>
               <td th:text="${item.boardUserName}" class="text-center">글쓴이</td>
               <td th:text="${item.boardCreateDt}" class="text-center">등록날짜</td>
@@ -128,10 +129,16 @@
               </form>
             </div>
 
-            <div th:if="${session.user} == null"></div>
-            <div th:unless="${session.user} == null">
+            <div th:if="${session.user} != null">
               <div class="d-flex justify-content-end">
-                <a href="/board/write/cateIdx=" th:attrappend="href=${categoryBoard.categoryIdx}"  class="btn btn-outline-primary">글쓰기</a>
+                <div th:if="${categoryBoard.categoryIdx} == 7">
+                  <div th:if="${session.user.managerYn} == 'Y'">
+                    <a href="/board/write/cateIdx=" th:attrappend="href=${categoryBoard.categoryIdx}"  class="btn btn-outline-primary">글쓰기</a>
+                  </div>
+                </div>
+                <div th:unless="${categoryBoard.categoryIdx} == 7">
+                  <a href="/board/write/cateIdx=" th:attrappend="href=${categoryBoard.categoryIdx}"  class="btn btn-outline-primary">글쓰기</a>
+                </div>
               </div>
             </div>
           </div>

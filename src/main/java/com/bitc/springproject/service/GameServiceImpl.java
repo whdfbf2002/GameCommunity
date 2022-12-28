@@ -3,6 +3,7 @@ package com.bitc.springproject.service;
 import com.bitc.springproject.common.FileUtils;
 import com.bitc.springproject.dto.GameDto;
 import com.bitc.springproject.dto.GameFileDto;
+import com.bitc.springproject.dto.ReviewDto;
 import com.bitc.springproject.mapper.GameMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,5 +40,26 @@ public class GameServiceImpl implements GameService{
         GameDto game = gameMapper.selectGameDetail(gameIdx);
 
         return game;
+    }
+
+    @Override
+    public List<ReviewDto> reviewList(int reviewGameIdx) throws Exception {
+        return gameMapper.reviewList(reviewGameIdx);
+    }
+
+    @Override
+    public void insertReview(int reviewGameIdx, String reviewUserId, String reviewContents, int reviewRating) throws Exception {
+        ReviewDto review = new ReviewDto();
+        review.setReviewGameIdx(reviewGameIdx);
+        review.setReviewUserId(reviewUserId);
+        review.setReviewContents(reviewContents);
+        review.setReviewRating(reviewRating);
+
+        gameMapper.insertReview(review);
+    }
+
+    @Override
+    public List<GameDto> limitGame() throws Exception {
+        return gameMapper.limitGame();
     }
 }

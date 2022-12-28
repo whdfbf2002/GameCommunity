@@ -63,7 +63,7 @@
               <td>
                 <a href="/board/" th:attrappend="href=${item.boardIdx}" style="color: gray" th:text="'[' + ${item.boardCategory} + '] '">제목</a>
                 <a href="/board/" th:attrappend="href=${item.boardIdx}" th:text="${item.boardTitle}">제목</a>
-                <a href="/board/" th:attrappend="href=${item.boardIdx}" style="color: red; font-weight: bold" th:if="${item.commentIdx} != 0" th:text="' [' + ${item.commentIdx} + ']'"></a>
+                <a href="/board/" th:attrappend="href=${item.boardIdx}" style="color: red; font-weight: bold; font-size: 13px" th:if="${item.commentCount} != 0" th:text="' [' + ${item.commentCount} + ']'"></a>
                 <a href="/board/" th:attrappend="href=${item.boardIdx}" th:unless="${item.commentIdx} != 0"></a>
               </td>
               <td th:text="${item.boardUserName}" class="text-center">글쓴이</td>

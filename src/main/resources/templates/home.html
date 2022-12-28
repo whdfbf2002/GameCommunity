@@ -12,6 +12,35 @@
 
   </script>
   <style th:replace="layout/styles :: styles"></style>
+  <style>
+    #title{
+      background-color: #6f6f6f;
+      color: white;
+      padding: 6px;
+      font-weight: bold;
+
+      display: flex;
+      justify-content: space-between;
+    }
+
+    #more{
+      font-size: 14px;
+      color: white;
+      font-weight: normal;
+    }
+
+    .info{
+
+      width: 100%;
+
+
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+
+  </style>
 </head>
 <body>
 <header th:replace="layout/header :: mainHeader(${categoryList})"></header>
@@ -20,8 +49,115 @@
     <div class="row">
       <aside th:replace="layout/sidebarLeft :: leftSidebar(${categoryList})"></aside>
       <div class="col-sm-8 section-inner">
+<!--  //////////////////////////////////////////////////////////////////////////////////////////////////  -->
+        <div class="container mb-4">
+          <div id="title" class="d-flex justify-content-between">
+            <span type="hidden"></span>
+            <span>공지사항</span>
+            <a href="/board?cateIdx=7" id="more">더보기+</a>
+          </div>
 
+          <table class="table table-hover table-striped" id="boardtable">
+            <thead>
+            <tr class="text-center" style="border-bottom: black">
+              <th style="width: 90px"></th>
+              <th>제목</th>
+              <th style="width: 90px">작성자</th>
+              <th style="width: 100px">등록일</th>
+              <th style="width: 50px">조회</th>
+              <th style="width: 50px">추천</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.size(noticeList)} > 0" th:each="item : ${noticeList}">
+              <td  class="text-center" style="font-size: 14px">공지</td>
+              <td>
+                <a href="/board/" th:attrappend="href=${item.boardIdx}" th:text="${item.boardTitle}">제목</a>
+                <a href="/board/" th:attrappend="href=${item.boardIdx}" style="color: red; font-weight: bold; font-size: 13px"
+                   th:if="${item.commentCount} != 0" th:text="' [' + ${item.commentCount} + ']'"></a>
+              </td>
+              <td th:text="${item.boardUserName}" class="text-center">글쓴이</td>
+              <td th:text="${item.boardCreateDt}" class="text-center">등록날짜</td>
+              <td th:text="${item.boardHitCnt}" class="text-center">조회수</td>
+              <td th:text="${item.boardLikeCnt}" class="text-center">추천수</td>
+            </tr>
+            <tr th:unless="${#lists.size(boardList)} > 0">
+              <td th:cols="5">조회된 내용이 없습니다.</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
 
+        <div class="container mb-5">
+          <div id="title" class="d-flex justify-content-between">
+            <span type="hidden"></span>
+            <span>전체 게시판</span>
+            <a href="/board/all" id="more">더보기+</a>
+          </div>
+
+          <table class="table table-hover table-striped" id="boardtable">
+            <thead>
+            <tr class="text-center" style="border-bottom: black">
+              <th style="width: 90px">카테고리</th>
+              <th>제목</th>
+              <th style="width: 90px">작성자</th>
+              <th style="width: 100px">등록일</th>
+              <th style="width: 50px">조회</th>
+              <th style="width: 50px">추천</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.size(boardList)} > 0" th:each="item : ${boardList}">
+              <td  class="text-center" style="font-size: 14px" th:text="${item.categoryName}"></td>
+              <td>
+                <a href="/board/" th:attrappend="href=${item.boardIdx}" style="color: gray"
+                   th:text="'[' + ${item.boardCategory} + '] '"></a>
+                <a href="/board/" th:attrappend="href=${item.boardIdx}" th:text="${item.boardTitle}">제목</a>
+                <a href="/board/" th:attrappend="href=${item.boardIdx}" style="color: red; font-weight: bold; font-size: 13px"
+                   th:if="${item.commentCount} != 0" th:text="' [' + ${item.commentCount} + ']'"></a>
+              </td>
+              <td th:text="${item.boardUserName}" class="text-center">글쓴이</td>
+              <td th:text="${item.boardCreateDt}" class="text-center">등록날짜</td>
+              <td th:text="${item.boardHitCnt}" class="text-center">조회수</td>
+              <td th:text="${item.boardLikeCnt}" class="text-center">추천수</td>
+            </tr>
+            <tr th:unless="${#lists.size(boardList)} > 0">
+              <td th:cols="5">조회된 내용이 없습니다.</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="container">
+          <div id="title" class="d-flex justify-content-between">
+            <span type="hidden"></span>
+            <span>게임 리뷰</span>
+            <a href="/game" id="more">더보기+</a>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-lg-4" th:if="${#lists.size(limitGame)} > 0" th:each="item : ${limitGame}">
+              <div class="card my-3">
+                <img th:src="${item.storedFilePath}" style="height: 200px" class="card-image-top">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <a href="/game/" th:attrappend="href=${item.gameIdx}" th:text="${item.gameTitle}" class="text-secondary" style="font-weight: bold"></a>
+                  </h5>
+                  <div class="wrap">
+                    <p class="info" th:text="${item.gameInfo}" style="height: 48px"></p>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <h4 th:text="${item.rating}"></h4>
+                    <a href="/game/" th:attrappend="href=${item.gameIdx}" class="btn btn-primary">더보기</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+<!--  //////////////////////////////////////////////////////////////////////////////////////////////////  -->
 
       </div>
       <aside th:replace="layout/sidebarRight :: sidebarRight"></aside>

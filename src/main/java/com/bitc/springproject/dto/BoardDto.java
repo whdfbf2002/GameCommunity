@@ -25,4 +25,6 @@ public class BoardDto {
     // 필터
     private String type;
     private String keyword;
+
+    private int commentCount;
 }
