@@ -10,6 +10,7 @@ public interface GameService {
     List<GameDto> selectGameList() throws Exception;
 
     void insertGame(GameDto game, MultipartHttpServletRequest multipart) throws Exception;
+
     GameDto selectGameDetail(int gameIdx) throws Exception;
 
     List<ReviewDto> reviewList(int reviewGameIdx) throws Exception;

@@ -1,6 +1,6 @@
 package com.bitc.springproject.service;
 
-import com.bitc.springproject.common.FileUtils;
+import com.bitc.springproject.configuration.common.FileUtils;
 import com.bitc.springproject.dto.GameDto;
 import com.bitc.springproject.dto.GameFileDto;
 import com.bitc.springproject.dto.ReviewDto;

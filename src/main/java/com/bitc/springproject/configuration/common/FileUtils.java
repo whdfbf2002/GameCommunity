@@ -1,4 +1,4 @@
-package com.bitc.springproject.common;
+package com.bitc.springproject.configuration.common;
 
 
 import com.bitc.springproject.dto.GameFileDto;
